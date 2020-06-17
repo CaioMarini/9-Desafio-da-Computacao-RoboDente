@@ -1,23 +1,52 @@
-/*
-   Arduino Robot Car Wireless Control using the HC-05 Bluetooth
-   
-                == MASTER DEVICE - Joystick ==
-                   
-   by Dejan Nedelkovski, www.HowToMechatronics.com
-*/
-int xAxis, yAxis;
+
+#define pinVRx A0
+#define pinVRy A1
+
+
 void setup() {
-  Serial.begin(38400); // Default communication rate of the Bluetooth module
+  // put your setup code here, to run once:
+  pinMode(pinVRx, INPUT);
+  pinMode(pinVRy, INPUT);
+
+  Serial.begin(38400);
+
 }
+
 void loop() {
-  xAxis = analogRead(A0); // Read Joysticks X-axis
-  yAxis = analogRead(A1); // Read Joysticks Y-axis
+  // put your main code here, to run repeatedly:
+  int valorVRx = analogRead(pinVRx);
+  int valorVRy = analogRead(pinVRy);
+
+  //Serial.print("\n   Valor VRX: ");
+  //Serial.print(valorVRx);
+  //Serial.print("   Valor VRy: ");
+  //Serial.print(valorVRy);
+
+  if(valorVRx <= 50){
+    //Serial.print("\nF");
+    Serial.write('F');//Frente
+    delay(20);
+  }else if(valorVRx >=1000){
+   // Serial.print("\n T");//Volta
+    Serial.write('T');
+    delay(20);
+  }else if(valorVRy <= 100){
+    //Serial.print("\nD");//Direita
+    Serial.write('D');
+    delay(20);
+  }else if(valorVRy >=1000){
+   // Serial.print("\nE");//esquerda
+    Serial.write('E');
+    delay(20);
+  }else{
+   Serial.write('A');
+    delay(20);
+  }
   
-  // Send the values via the serial port to the slave HC-05 Bluetooth device
-  Serial.write(xAxis/4); // Dividing by 4 for converting from 0 - 1023 to 0 - 256, (1 byte) range
-  Serial.write(yAxis/4);
-  Serial.write("l");
   
-  delay(20);
-  //Serial.write(100);
+  
+  
+  
 }
+
+  
