@@ -1,0 +1,143 @@
+#include <Ultrasonic.h>//bibliotec do sensor ultrassonico
+#define enA 9
+#define in1 4
+#define in2 5
+#define enB 10
+#define in3 6
+#define in4 7
+const int led = 53;
+char recebido;
+
+
+//Sensor Ultrassonico
+#define pinptrigger 22 //pino usado para disparar os pulsos do sensor
+#define pinecho 24//pino usado para ler a saida do sensor
+Ultrasonic ultrasonic(pinptrigger, pinecho);
+
+int motorSpeedA = 0;
+int motorSpeedB = 0;
+
+void setup() {
+  
+  // put your setup code here, to run once:
+  Serial.begin(38400);
+  
+  //CARRO
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+
+  pinMode(led, OUTPUT);
+
+  
+  delay(100);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  float cmMsec;
+  long microsec = ultrasonic.timing();
+
+  cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);
+
+  if(Serial.available() > 0){
+    recebido = Serial.read();
+  }
+
+
+if(cmMsec > 25){
+  switch (recebido){
+    case 'F':
+      frente();      
+      break;
+    case 'T':
+      tras();         
+      break;
+    case 'D':
+       direita();
+       break;
+     case 'E':
+        esquerda();
+        break;
+      case 'A':
+        motorSpeedA = 0;
+        motorSpeedB = 0;
+        break;
+      case 'O':
+      //Funcionalidade de teste, ao ligar o robo testar a conexao e se tudo esta funcionando
+         digitalWrite(led, HIGH);         
+         delay(500);
+         digitalWrite(led, LOW);
+         delay(300);
+         digitalWrite(led, HIGH); 
+         delay(500);
+         digitalWrite(led, LOW);
+          break;
+      case 'W':
+        //Funcionalidade automatica
+        break;
+      case 'S':
+        //Funcionalidade automatica
+       break;
+  }
+}else{
+        motorSpeedA = 0;
+        motorSpeedB = 0;
+}
+
+  analogWrite(enA, motorSpeedA); // Send PWM signal to motor A
+  analogWrite(enB, motorSpeedB); // Send PWM signal to motor B
+
+
+}//fim loop
+
+
+
+
+
+
+void frente(){
+//Colocar motor A para Frente
+    // Set Motor A forward
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    // Set Motor B forward
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    motorSpeedA = 255;
+    motorSpeedB = 255;  
+}
+void tras(){
+   // Set Motor backward
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+    // Set Motor B backward
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+    motorSpeedA = 255;
+    motorSpeedB = 255;  
+}
+void direita(){
+  // Set Motor A forward
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+    // Set Motor B forward
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    motorSpeedA = 255;
+    motorSpeedB = 255; 
+}
+void esquerda(){
+  // Set Motor A forward
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    // Set Motor B forward
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+    motorSpeedA = 255;
+    motorSpeedB = 255; 
+}
+
